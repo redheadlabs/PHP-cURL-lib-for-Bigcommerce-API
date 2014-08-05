@@ -11,10 +11,10 @@ class connection
 	 *
 	 * @var string stores data for the class
 	 */
-	static public $_path;
-	static private $_user;
-	static private $_token;
-	static private $_headers;
+	public $_path;
+	private $_user;
+	private $_token;
+	private $_headers;
 
 	/**
 	 * Sets $_path, $_user, $_token, $_headers upon class instantiation
@@ -35,14 +35,13 @@ class connection
 
 	}	
 
-
-	public static function http_parse_headers( $header )
+	public function http_parse_headers( $header )
     {
         $retVal = array();
         $fields = explode("\r\n", preg_replace('/\x0D\x0A[\x09\x20]+/', ' ', $header));
+
         foreach( $fields as $field ) {
             if( preg_match('/([^:]+): (.+)/m', $field, $match) ) {
-                $match[1] = preg_replace('/(?<=^|[\x09\x20\x2D])./e', 'strtoupper("\0")', strtolower(trim($match[1])));
                 if( isset($retVal[$match[1]]) ) {
                     $retVal[$match[1]] = array($retVal[$match[1]], $match[2]);
                 } else {
@@ -50,7 +49,7 @@ class connection
                 }
             }
         }
-        if ($retVal['X-Bc-Apilimit-Remaining'] <= 100) {
+        if ($retVal['X-BC-ApiLimit-Remaining'] <= 100) {
         	sleep(300);
         }
     }
@@ -105,9 +104,7 @@ class connection
 			return $results;
 		} else {
 			$this->error($body, $url, null, 'GET');
-		} 
-
-	
+		}
 	}
 
 	/**
